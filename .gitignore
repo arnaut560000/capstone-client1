@@ -1,0 +1,13 @@
+/storage/photos/*
+!/storage/photos/.gitkeep
+/storage/*.log
+/storage/test-*
+/storage/sessions/
+.env
+.env.*
+!.env.example
+*.log
+*.sql.gz
+*.sql.zip
+/backups/
+/config.local.php

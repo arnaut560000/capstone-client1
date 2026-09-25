@@ -1,0 +1,35 @@
+.auth-page {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 32px 20px;
+    background: #f3f7f4;
+}
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    margin: 0;
+    padding: 36px;
+    background: #fff;
+    border: 1px solid #dfe7e1;
+    border-radius: 14px;
+    box-shadow: 0 12px 36px #173f2410;
+}
+.auth-card .brand { margin-bottom: 32px; }
+.auth-heading { margin-bottom: 26px; }
+.auth-heading .eyebrow { display: block; margin-bottom: 8px; }
+.auth-heading h1 { font-size: 27px; line-height: 1.25; }
+.auth-heading p { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.account-form { display: flex; flex-direction: column; align-items: stretch; }
+.account-form label { margin: 20px 0 8px; font-size: 13px; font-weight: 600; }
+.account-form label:first-of-type { margin-top: 0; }
+.account-form input { width: 100%; height: 46px; margin: 0; padding: 11px 13px; font-size: 14px; }
+.account-help { color: var(--muted); font-size: 11px; margin-top: 7px; }
+.account-form .button { width: 100%; height: 46px; margin-top: 26px; font-size: 13px; justify-content: center; }
+.auth-card .auth-footnote { margin-top: 24px; line-height: 1.5; }
+.auth-page > .flash { width: 100%; max-width: 440px; }
+@media (max-width: 480px) {
+    .auth-page { padding: 24px 16px; }
+    .auth-card { padding: 28px 24px; }
+    .auth-card .brand { margin-bottom: 28px; }
+    .auth-heading h1 { font-size: 25px; }
+}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title><?= e($title) ?> · OSY Connect</title><link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="assets/auth.css"><script src="assets/app.js" defer></script></head>
+<body class="<?= in_array($page, ['login', 'setup']) ? 'auth-page' : '' ?> <?= $page === 'card' ? 'card-page' : '' ?>">
+<?php if (!in_array($page, ['login', 'setup'])): ?>
+<aside class="sidebar no-print"><a class="brand" href="<?= e(url('dashboard')) ?>"><span class="brand-mark"><?= icon('records') ?></span><span>OSY<span class="brand-light">connect</span><small>YOUTH MONITORING SYSTEM</small></span></a><div class="nav-label">WORKSPACE</div><nav aria-label="Main navigation">
+<?php foreach (['dashboard' => 'Overview', 'records' => 'OSY records', 'register' => 'Register OSY', 'idcards' => 'ID generation', 'reports' => 'Reports'] as $key => $label): $active = $page === $key || ($key === 'records' && in_array($page, ['profile', 'edit'])) || ($key === 'idcards' && $page === 'card'); ?>
+<a href="<?= e(url($key)) ?>" class="nav-item <?= $active ? 'selected' : '' ?>" <?= $active ? 'aria-current="page"' : '' ?>><?= icon($key) ?><span><?= e($label) ?></span></a>
+<?php endforeach; ?></nav><div class="sidebar-note"><span class="small-circle">✦</span><strong>Every youth counts.</strong><p>A clearer picture.<br>A better start for every youth.</p></div><div class="account"><span class="avatar admin-avatar"><?= e(initials($_SESSION['username'] ?? 'Admin')) ?></span><div><strong><?= e($_SESSION['username'] ?? 'Admin') ?></strong><small>Administrator</small></div><form method="post" action="<?= e(url('logout')) ?>"><?= csrf() ?><button class="icon-button" aria-label="Log out" title="Log out"><?= icon('logout') ?></button></form></div></aside>
+<div class="workspace"><header class="topbar no-print"><div class="breadcrumb">Workspace <span>/</span> <strong><?= e($title) ?></strong></div><div class="topbar-right"><span class="live-dot"></span> Admin portal <span class="divider"></span><span><?= date('M j, Y') ?></span></div><form class="mobile-logout" method="post" action="<?= e(url('logout')) ?>"><?= csrf() ?><button class="icon-button">Log out</button></form></header><main>
+<?php endif; ?>
+<?php if (isset($_SESSION['flash'])): ?><div class="flash" role="status"><?= e($_SESSION['flash']) ?></div><?php unset($_SESSION['flash']); endif; ?>
+<?php if ($error): ?><section class="panel error-panel"><h1><?= e($title) ?></h1><p><?= e($error) ?></p><a class="button primary" href="<?= e(url('dashboard')) ?>">Back to dashboard</a></section>
+<?php else: require __DIR__ . '/views/' . ($views[$page] ?? 'auth') . '.php'; endif; ?>
+<?php if (!in_array($page, ['login', 'setup'])): ?><footer class="footer no-print"><span>OSY Connect <span>·</span> <?= e($config['organization']) ?></span><span>Helping youth move forward.</span></footer></main></div><?php endif; ?>
+</body></html>
