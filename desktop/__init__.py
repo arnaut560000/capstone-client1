@@ -1,0 +1,1 @@
+"""OSY Connect desktop application."""

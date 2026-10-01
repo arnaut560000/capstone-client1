@@ -1,4 +1,4 @@
 Options -Indexes
-<FilesMatch "^(config\.php|database\.sql|README\.md)$">
+<FilesMatch "^(config\.php|database\.sql|README(?:-PHP)?\.md)$|\.(?:sqlite3?|db|zip|csv|py|pyc)$">
     Require all denied
 </FilesMatch>

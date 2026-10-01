@@ -1,8 +1,18 @@
-/storage/photos/*
-!/storage/photos/.gitkeep
+.desktop-deps/
+.desktop-test-deps/
+desktop-data/
+__pycache__/
+*.pyc
+tmp/
+build/
+dist/
+*.spec
+OSY Connect.exe
+storage/sessions/
+storage/photos/*
+!storage/photos/.gitkeep
 /storage/*.log
 /storage/test-*
-/storage/sessions/
 .env
 .env.*
 !.env.example
