@@ -123,6 +123,10 @@ class WebSQLiteTests(unittest.TestCase):
         self.assertEqual(results.count('created'), 1)
         self.assertEqual(results.count('already-created'), 4)
 
+    def test_transaction_rollback_preserves_counter(self):
+        body = 'try { writeTransaction(db(), function($pdo) { allocateOsyId($pdo); throw new RuntimeException("rollback-test"); }); } catch (RuntimeException $e) { if ($e->getMessage() !== "rollback-test") throw $e; } echo writeTransaction(db(), fn($pdo) => allocateOsyId($pdo));'
+        self.assertTrue(self.php_code(body, self.folder / 'rollback').endswith('-0001'))
+
 
 
 if __name__ == '__main__':
