@@ -19,3 +19,18 @@ On this development laptop, PHP is available at `C:\xampp\php\php.exe`. Running 
 ## Use the existing localhost/folder-name address
 
 Place the project in `C:\xampp\htdocs\folder-name` and start **Apache only**. Open **http://localhost/folder-name/**. MySQL may remain stopped. Ensure Apache's PHP configuration also has `pdo_sqlite` enabled.
+
+## Storage and existing records
+
+- `storage/database/osy.sqlite3`: browser records, administrator account, and ID counters.
+- `storage/photos/`: uploaded profile photos.
+- `storage/sessions/`: temporary login sessions.
+- `database.sql`: SQLite schema, applied automatically to a new database. Do not import it into MySQL.
+- `config.php`: browser storage location and organization name on reports and IDs.
+- `app/database.php`: SQLite connections, schema initialization, and transactions.
+
+The storage folder must be writable. `OSY_WEB_STORAGE` can override it with an absolute local directory containing `database`, `photos`, and `sessions`. The old `OSY_DB_HOST`, `OSY_DB_NAME`, username and password settings are no longer used.
+
+**Existing MySQL records are not automatically migrated.** The old MySQL database is not changed. Back it up before a separate migration; a new browser SQLite installation starts empty.
+
+The browser database is separate from the Tkinter app's `desktop-data/osy.sqlite3`. Their accounts and records do not synchronize, and their database files must not be substituted for each other.
