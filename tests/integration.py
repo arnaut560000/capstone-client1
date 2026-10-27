@@ -1,15 +1,16 @@
-"""Run against a NEW, disposable test database on port 8080. Never production.
+"""Run against a NEW, disposable SQLite browser store. Never production.
 Uses only Python's standard library. Leaves two clearly fictional test records.
 """
 import base64
 import datetime
 import http.cookiejar
+import os
 import re
 import urllib.error
 import urllib.parse
 import urllib.request
 
-BASE = 'http://127.0.0.1:8080/'
+BASE = os.environ.get('OSY_TEST_URL', 'http://127.0.0.1:8080/').rstrip('/') + '/'
 client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 checks = 0
 
