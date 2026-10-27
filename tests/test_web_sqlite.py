@@ -106,6 +106,15 @@ class WebSQLiteTests(unittest.TestCase):
         with closing(sqlite3.connect(path)) as database:
             self.assertEqual(database.execute('SELECT osy_id, full_name, photo FROM osy_records ORDER BY id').fetchall(), before)
 
+    def test_parallel_counter_allocation(self):
+        folder = self.folder / 'parallel-ids'
+        body = '$ids=[]; for ($i=0;$i<10;$i++) { $ids[]=writeTransaction(db(), function($pdo) { $id=allocateOsyId($pdo); usleep(1000); return $id; }); } echo json_encode($ids);'
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            results = list(pool.map(lambda _: json.loads(self.php_code(body, folder)), range(8)))
+        identifiers = [item for group in results for item in group]
+        self.assertEqual(len(set(identifiers)), 80)
+        self.assertEqual(sorted(int(item.rsplit('-', 1)[1]) for item in identifiers), list(range(1, 81)))
+
 
 
 if __name__ == '__main__':
