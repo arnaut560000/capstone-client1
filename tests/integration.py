@@ -103,7 +103,8 @@ _, _, html, _ = request('index.php?page=card&id=' + first_id)
 check('IDENTIFICATION CARD' in html and 'Juan Demo Youth' in html and 'Authorized signature' in html, 'ID preview contains saved details')
 status, _, html, _ = request('index.php?page=profile&id=999999')
 check(status == 404 and 'not found' in html, 'Missing record has friendly 404')
-for path in ['config.php', 'database.sql', 'storage/test-processes.json', 'app/bootstrap.php']:
+for path in ['config.php', 'database.sql', 'storage/test-processes.json', 'app/bootstrap.php',
+             'storage/database/osy.sqlite3', 'storage/database/osy.sqlite3-journal', 'app/database.php']:
     status, _, _, _ = request(path)
     check(status == 404, 'Private path blocked: ' + path)
 _, _, html, _ = request('index.php?page=dashboard')
