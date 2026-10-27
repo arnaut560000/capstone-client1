@@ -34,3 +34,12 @@ The storage folder must be writable. `OSY_WEB_STORAGE` can override it with an a
 **Existing MySQL records are not automatically migrated.** The old MySQL database is not changed. Back it up before a separate migration; a new browser SQLite installation starts empty.
 
 The browser database is separate from the Tkinter app's `desktop-data/osy.sqlite3`. Their accounts and records do not synchronize, and their database files must not be substituted for each other.
+
+## Transfer to another laptop or back up
+
+1. Stop the PHP server (or Apache) so the database is not being written.
+2. Copy the project with **`storage/database` and `storage/photos`**. Keep the whole database directory, including any SQLite journal files. Session files do not need to be transferred.
+3. On the destination laptop, supply PHP with the required extensions and run the server command above, or use an existing Apache/PHP installation.
+4. Sign in with the same browser administrator account.
+
+No phpMyAdmin import or MySQL setup is needed. If `OSY_WEB_STORAGE` is configured, copy that storage location instead. Keep the working SQLite database on a local disk and copy it only while closed; do not use a live shared or OneDrive-synchronized database for simultaneous use by multiple computers. This app is intended for a local capstone demonstration.
