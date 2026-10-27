@@ -58,7 +58,7 @@ $env:OSY_DATA_DIR = "$env:LOCALAPPDATA\OSYConnect"
 python main.py
 ```
 
-## Bring records over from XAMPP
+## Bring old MySQL records into the desktop app
 
 The original PHP database is **not changed or imported automatically**. Export once while the old MySQL service is available:
 
@@ -115,4 +115,4 @@ Tests use disposable data and cover authentication, validation, persistent recor
 - `desktop-data/`: automatically created database and photos; preserve this folder.
 - `tests/test_desktop.py`: desktop tests.
 
-The previous PHP files remain available as a fallback. Their original instructions are in [README-PHP.md](README-PHP.md); they are not used by the desktop application.
+The PHP browser application is a separate interface using its own SQLite storage. Its instructions are in [README-PHP.md](README-PHP.md); it is not used by the desktop executable.
