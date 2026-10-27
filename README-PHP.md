@@ -15,3 +15,7 @@ Open **http://localhost:8080/**. Keep the terminal open while using the app. Use
 The app automatically creates **`storage/database/osy.sqlite3`** and its tables. Choose your own administrator username and password (8-72 characters), then sign in. The setup page is disabled after the first account is created. There is no default account and no sample data.
 
 On this development laptop, PHP is available at `C:\xampp\php\php.exe`. Running that executable does not require starting XAMPP's Apache or MySQL services. Another laptop still needs a PHP runtime with the extensions above; a portable PHP runtime has not been bundled.
+
+## Use the existing localhost/folder-name address
+
+Place the project in `C:\xampp\htdocs\folder-name` and start **Apache only**. Open **http://localhost/folder-name/**. MySQL may remain stopped. Ensure Apache's PHP configuration also has `pdo_sqlite` enabled.
