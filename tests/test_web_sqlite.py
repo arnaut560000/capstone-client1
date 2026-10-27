@@ -115,6 +115,14 @@ class WebSQLiteTests(unittest.TestCase):
         self.assertEqual(len(set(identifiers)), 80)
         self.assertEqual(sorted(int(item.rsplit('-', 1)[1]) for item in identifiers), list(range(1, 81)))
 
+    def test_only_one_administrator_during_parallel_setup(self):
+        folder = self.folder / 'parallel-setup'
+        body = 'try { createAdministrator("admin".$argv[1], "Disposable-Password-123"); echo "created"; } catch (RuntimeException $e) { if ($e->getMessage() !== "Setup is already complete. Please sign in.") throw $e; echo "already-created"; }'
+        with ThreadPoolExecutor(max_workers=5) as pool:
+            results = list(pool.map(lambda i: self.php_code(body, folder, str(i)), range(5)))
+        self.assertEqual(results.count('created'), 1)
+        self.assertEqual(results.count('already-created'), 4)
+
 
 
 if __name__ == '__main__':
