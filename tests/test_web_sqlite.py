@@ -127,6 +127,12 @@ class WebSQLiteTests(unittest.TestCase):
         body = 'try { writeTransaction(db(), function($pdo) { allocateOsyId($pdo); throw new RuntimeException("rollback-test"); }); } catch (RuntimeException $e) { if ($e->getMessage() !== "rollback-test") throw $e; } echo writeTransaction(db(), fn($pdo) => allocateOsyId($pdo));'
         self.assertTrue(self.php_code(body, self.folder / 'rollback').endswith('-0001'))
 
+    def test_unavailable_storage_reports_an_error(self):
+        blocked = self.folder / 'not-a-directory'
+        blocked.write_text('keep this file')
+        body = 'try { db(); throw new LogicException("Expected storage error"); } catch (RuntimeException $e) { echo $e->getMessage(); }'
+        self.assertIn('Cannot create browser storage', self.php_code(body, blocked))
+        self.assertEqual(blocked.read_text(), 'keep this file')
 
 
 if __name__ == '__main__':
