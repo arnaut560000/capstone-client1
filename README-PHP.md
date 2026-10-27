@@ -58,3 +58,13 @@ Sign in → Register OSY → Save registration → Preview ID → Print ID.
 Photo uploads accept JPG, PNG, or WebP up to 2 MB. Set PHP's `upload_max_filesize` to at least `2M` and `post_max_size` above that, such as `8M`.
 
 For ID cards, use **100% / actual size**, turn off browser headers and footers, and enable background graphics. Cards are 86 × 54 mm. Reports use A4 landscape. Check long names and addresses in the preview before printing.
+
+## Verification
+
+The automated suite starts an isolated PHP server with **only the SQLite PDO driver**, using a disposable storage folder. It does not need MySQL or touch real records:
+
+```powershell
+python -m unittest discover -s tests -p test_web_sqlite.py -v
+```
+
+Set `OSY_PHP` to php.exe's absolute path if it is not on PATH. Tests include 34 browser workflow checks, persistence after restart, concurrent first-account setup, concurrent ID allocation, rollback, and storage failures. `tests/integration.py` is called by this runner; do not point it at a real database.
