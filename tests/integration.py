@@ -29,7 +29,7 @@ def request(path='', data=None, upload=None, session=client):
     else:
         body = urllib.parse.urlencode(data).encode() if data is not None else None
     try:
-        result = session.open(urllib.request.Request(BASE + path, data=body, headers=headers))
+        result = session.open(urllib.request.Request(BASE + path, data=body, headers=headers), timeout=20)
     except urllib.error.HTTPError as error:
         result = error
     raw = result.read()
