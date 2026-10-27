@@ -91,6 +91,21 @@ class WebSQLiteTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn('34 integration checks passed', result.stdout)
 
+    def test_02_persists_after_server_restart(self):
+        path = self.folder / 'storage/database/osy.sqlite3'
+        with closing(sqlite3.connect(path)) as database:
+            self.assertEqual(database.execute('PRAGMA integrity_check').fetchone()[0], 'ok')
+            self.assertEqual(database.execute('SELECT COUNT(*) FROM admins').fetchone()[0], 1)
+            before = database.execute('SELECT osy_id, full_name, photo FROM osy_records ORDER BY id').fetchall()
+            self.assertEqual(len(before), 2)
+            self.assertTrue((self.folder / 'storage/photos' / before[0][2]).is_file())
+        self.stop_server()
+        self.start_server()
+        with urllib.request.urlopen(self.base, timeout=10) as response:
+            self.assertIn('page=login', response.url)
+        with closing(sqlite3.connect(path)) as database:
+            self.assertEqual(database.execute('SELECT osy_id, full_name, photo FROM osy_records ORDER BY id').fetchall(), before)
+
 
 
 if __name__ == '__main__':
