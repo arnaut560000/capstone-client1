@@ -43,3 +43,18 @@ The browser database is separate from the Tkinter app's `desktop-data/osy.sqlite
 4. Sign in with the same browser administrator account.
 
 No phpMyAdmin import or MySQL setup is needed. If `OSY_WEB_STORAGE` is configured, copy that storage location instead. Keep the working SQLite database on a local disk and copy it only while closed; do not use a live shared or OneDrive-synchronized database for simultaneous use by multiple computers. This app is intended for a local capstone demonstration.
+
+## Features and typical workflow
+
+Sign in → Register OSY → Save registration → Preview ID → Print ID.
+
+- Personal, education, employment, and registration details, with age calculated from birthdate.
+- Sequential IDs such as `OSY-2026-0001`, allocated within a SQLite write transaction. New IDs use the current year; editing keeps the existing ID.
+- Search by name or ID; filter by sex, record status, and employment.
+- Full profiles, editing, reversible archive/restore, and protected photo viewing.
+- Dashboard totals, age groups, employment counts, and recent registrations. Archived records are excluded.
+- Printable IDs and filtered master-list reports; use the browser's Save as PDF option if needed.
+
+Photo uploads accept JPG, PNG, or WebP up to 2 MB. Set PHP's `upload_max_filesize` to at least `2M` and `post_max_size` above that, such as `8M`.
+
+For ID cards, use **100% / actual size**, turn off browser headers and footers, and enable background graphics. Cards are 86 × 54 mm. Reports use A4 landscape. Check long names and addresses in the preview before printing.
