@@ -1,33 +1,34 @@
 CREATE TABLE IF NOT EXISTS admins (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL COLLATE NOCASE UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS id_sequences (
-    year SMALLINT UNSIGNED PRIMARY KEY,
-    next_number INT UNSIGNED NOT NULL DEFAULT 1
-) ENGINE=InnoDB;
+    year INTEGER PRIMARY KEY,
+    next_number INTEGER NOT NULL DEFAULT 1 CHECK (next_number > 0)
+);
 
 CREATE TABLE IF NOT EXISTS osy_records (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    osy_id VARCHAR(30) NOT NULL UNIQUE,
-    full_name VARCHAR(150) NOT NULL,
-    birthdate DATE NOT NULL,
-    sex ENUM('Male','Female') NOT NULL,
-    address VARCHAR(500) NOT NULL,
-    contact_number VARCHAR(30) NOT NULL DEFAULT '',
-    educational_attainment VARCHAR(80) NOT NULL,
-    last_school VARCHAR(180) NOT NULL DEFAULT '',
-    reason_stopped VARCHAR(1000) NOT NULL DEFAULT '',
-    employment_status ENUM('Employed','Unemployed') NOT NULL,
-    date_registered DATE NOT NULL,
-    status ENUM('Active','Inactive') NOT NULL DEFAULT 'Active',
-    photo VARCHAR(80) DEFAULT NULL,
-    archived_at DATETIME DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_name (full_name),
-    INDEX idx_archived (archived_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    osy_id TEXT NOT NULL UNIQUE,
+    full_name TEXT NOT NULL,
+    birthdate TEXT NOT NULL,
+    sex TEXT NOT NULL CHECK (sex IN ('Male', 'Female')),
+    address TEXT NOT NULL,
+    contact_number TEXT NOT NULL DEFAULT '',
+    educational_attainment TEXT NOT NULL,
+    last_school TEXT NOT NULL DEFAULT '',
+    reason_stopped TEXT NOT NULL DEFAULT '',
+    employment_status TEXT NOT NULL CHECK (employment_status IN ('Employed', 'Unemployed')),
+    date_registered TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Active' CHECK (status IN ('Active', 'Inactive')),
+    photo TEXT DEFAULT NULL,
+    archived_at TEXT DEFAULT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_name ON osy_records(full_name);
+CREATE INDEX IF NOT EXISTS idx_archived ON osy_records(archived_at);

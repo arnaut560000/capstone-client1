@@ -1,8 +1,18 @@
 <?php
 declare(strict_types=1);
 date_default_timezone_set('Asia/Manila');
-$sessionDirectory = __DIR__ . '/../storage/sessions';
-if (!is_dir($sessionDirectory)) mkdir($sessionDirectory, 0700, true);
+require_once __DIR__ . '/database.php';
+$sessionDirectory = webStoragePath('sessions');
+try {
+    ensureWebStorage();
+    if (!is_dir($sessionDirectory) && !@mkdir($sessionDirectory, 0700, true) && !is_dir($sessionDirectory)) {
+        throw new RuntimeException('Could not create browser session storage.');
+    }
+} catch (Throwable $exception) {
+    error_log((string)$exception);
+    http_response_code(500);
+    exit('Could not prepare browser storage. Check the storage folder permissions in config.php.');
+}
 session_save_path($sessionDirectory);
 session_name('OSY_CONNECT_SESSION');
 ini_set('session.use_strict_mode', '1');
@@ -11,19 +21,9 @@ session_start();
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Cache-Control: no-store');
-$config = require __DIR__ . '/../config.php';
+$config = webConfig();
 const EDUCATION = ['No formal education', 'Elementary level', 'Elementary graduate', 'Junior high school level', 'Junior high school graduate', 'Senior high school level', 'Senior high school graduate', 'Vocational / Technical', 'College level', 'College graduate'];
 
-function db(bool $withDatabase = true): PDO {
-    global $config;
-    static $connection;
-    if ($withDatabase && $connection) return $connection;
-    if (!preg_match('/^[a-zA-Z0-9_]+$/', $config['database'])) throw new RuntimeException('Invalid database name.');
-    $dsn = 'mysql:host=' . $config['host'] . ';port=' . $config['port'] . ($withDatabase ? ';dbname=' . $config['database'] : '') . ';charset=utf8mb4';
-    $pdo = new PDO($dsn, $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_EMULATE_PREPARES => false]);
-    if ($withDatabase) $connection = $pdo;
-    return $pdo;
-}
 function e(mixed $value): string { return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8'); }
 function url(string $page, array $params = []): string { return 'index.php?' . http_build_query(['page' => $page] + $params); }
 function redirect(string $page, array $params = []): never { header('Location: ' . url($page, $params)); exit; }

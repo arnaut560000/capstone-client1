@@ -4,7 +4,13 @@ require __DIR__ . '/app/actions.php';
 $page = (string)($_GET['page'] ?? 'dashboard');
 $views = ['dashboard' => 'dashboard', 'records' => 'records', 'idcards' => 'records', 'reports' => 'records', 'register' => 'form', 'edit' => 'form', 'profile' => 'profile', 'card' => 'card', 'login' => 'auth', 'setup' => 'auth'];
 $error = null; $errors = []; $ready = false;
-try { $ready = (bool)db()->query('SELECT COUNT(*) FROM admins')->fetchColumn(); } catch (PDOException $exception) { /* Setup screen explains local configuration. */ }
+try { $ready = (bool)db()->query('SELECT COUNT(*) FROM admins')->fetchColumn(); }
+catch (Throwable $exception) {
+    error_log((string)$exception);
+    $errors[] = $exception instanceof PDOException
+        ? 'Could not open the SQLite database. Check that browser storage is writable and pdo_sqlite is enabled.'
+        : $exception->getMessage();
+}
 if (!$ready && $page !== 'setup') redirect('setup');
 if ($ready && $page === 'setup') redirect(isset($_SESSION['admin_id']) ? 'dashboard' : 'login');
 if (!in_array($page, ['login', 'setup'], true) && !isset($_SESSION['admin_id'])) redirect('login');
@@ -16,13 +22,7 @@ try {
         if (strlen($password) < 8 || strlen($password) > 72) $errors[] = 'Use a password between 8 and 72 characters.';
         if ($password !== ($_POST['confirm_password'] ?? '')) $errors[] = 'The passwords do not match.';
         if (!$errors) {
-            $server = db(false); $server->exec('CREATE DATABASE IF NOT EXISTS `' . $config['database'] . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
-            db()->exec(file_get_contents(__DIR__ . '/database.sql'));
-            if (!(int)db()->query("SELECT GET_LOCK('osy_first_admin_setup', 10)")->fetchColumn()) throw new RuntimeException('Setup is busy. Please try again.');
-            try {
-                if ((int)db()->query('SELECT COUNT(*) FROM admins')->fetchColumn() !== 0) throw new RuntimeException('Setup is already complete. Please sign in.');
-                db()->prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)')->execute([$username, password_hash($password, PASSWORD_DEFAULT)]);
-            } finally { db()->query("SELECT RELEASE_LOCK('osy_first_admin_setup')"); }
+            createAdministrator($username, $password);
             flash('Setup complete. Sign in with your new admin account.'); redirect('login');
         }
     }
@@ -41,12 +41,12 @@ try {
     if ($page === 'logout' && $_SERVER['REQUEST_METHOD'] === 'POST') { $_SESSION = []; session_destroy(); redirect('login'); }
     if (in_array($page, ['edit', 'profile', 'card', 'photo', 'archive', 'restore'], true)) $person = record((int)($_GET['id'] ?? 0));
     if ($page === 'photo') {
-        $file = __DIR__ . '/storage/photos/' . basename($person['photo'] ?? '');
+        $file = webStoragePath('photos/' . basename($person['photo'] ?? ''));
         if (empty($person['photo']) || !is_file($file)) { http_response_code(404); exit; }
         header('Content-Type: ' . (new finfo(FILEINFO_MIME_TYPE))->file($file)); readfile($file); exit;
     }
     if (in_array($page, ['archive', 'restore'], true) && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        db()->prepare('UPDATE osy_records SET archived_at = ' . ($page === 'archive' ? 'NOW()' : 'NULL') . ' WHERE id = ?')->execute([$person['id']]);
+        db()->prepare('UPDATE osy_records SET archived_at = ' . ($page === 'archive' ? 'CURRENT_TIMESTAMP' : 'NULL') . ', updated_at = CURRENT_TIMESTAMP WHERE id = ?')->execute([$person['id']]);
         flash($page === 'archive' ? 'Record archived. You can restore it from Archived records.' : 'Record restored successfully.'); redirect('records', $page === 'archive' ? [] : ['archived' => 1]);
     }
     if (in_array($page, ['register', 'edit'], true)) {
@@ -56,7 +56,7 @@ try {
     if (!isset($views[$page])) { http_response_code(404); $error = 'Page not found.'; }
 } catch (Throwable $exception) {
     error_log((string)$exception);
-    if ($exception instanceof PDOException) $errors[] = 'Could not connect to or update the database. Start MySQL in XAMPP and check config.php.';
+    if ($exception instanceof PDOException) $errors[] = 'Could not open or update the SQLite database. Check that browser storage is writable and pdo_sqlite is enabled.';
     else $errors[] = $exception->getMessage();
     if (!in_array($page, ['login', 'setup', 'register', 'edit'], true)) $error = end($errors);
 }

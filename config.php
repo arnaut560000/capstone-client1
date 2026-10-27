@@ -1,10 +1,6 @@
 <?php
-// XAMPP defaults. Change these if your MySQL settings are different.
+// Browser application storage. No MySQL service or database credentials needed.
 return [
-    'host' => getenv('OSY_DB_HOST') ?: '127.0.0.1',
-    'port' => getenv('OSY_DB_PORT') ?: '3306',
-    'database' => getenv('OSY_DB_NAME') ?: 'osy_monitoring',
-    'username' => getenv('OSY_DB_USER') ?: 'root',
-    'password' => getenv('OSY_DB_PASSWORD') ?: '',
+    'storage' => getenv('OSY_WEB_STORAGE') ?: __DIR__ . '/storage',
     'organization' => 'Community Youth Affairs',
 ];
