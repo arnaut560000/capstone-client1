@@ -2,6 +2,12 @@
 
 A native **Tkinter + SQLite** Out-of-School Youth Monitoring System. Runs without XAMPP, MySQL, a browser, or a web server.
 
+## Browser version: PHP + SQLite
+
+The PHP/browser version now also uses SQLite, with its own database at `storage/database/osy.sqlite3`. No MySQL service or phpMyAdmin import is needed for a fresh installation. It still needs PHP with `pdo_sqlite`, `fileinfo`, and `mbstring` enabled. From this folder, run `php -S 127.0.0.1:8080 router.php` and open `http://localhost:8080/`. If using Apache instead, only Apache needs to be running.
+
+See [README-PHP.md](README-PHP.md) for setup, transfer, and backup instructions. Existing MySQL data is not automatically migrated. Browser data and desktop data remain separate.
+
 ## Open the Windows app
 
 Double-click the **OSY Connect** shortcut on your desktop, or open **`OSY Connect.exe`** in this project folder. No terminal, Python installation, XAMPP, or internet connection is needed for the packaged app. Allow a few seconds for it to open.
