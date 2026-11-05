@@ -12,6 +12,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepInFrame
 
+from .branding import SEALS_PATH
+
 GREEN = colors.HexColor("#14765b")
 INK = colors.HexColor("#24352f")
 FONT = "Helvetica"
@@ -47,8 +49,10 @@ def id_pdf(record, destination, organization, photo_path=None):
     pdf.setTitle("OSY ID - " + record["osy_id"])
     pdf.setFillColor(GREEN)
     pdf.rect(0, height - 12 * mm, width, 12 * mm, fill=1, stroke=0)
-    draw_fit(pdf, "OUT-OF-SCHOOL YOUTH", 4 * mm, height - 7 * mm, 78 * mm, 4.5 * mm, 10, True, colors.white)
-    draw_fit(pdf, "IDENTIFICATION CARD", 4 * mm, height - 11 * mm, 78 * mm, 3.5 * mm, 6.5, False, colors.white)
+    pdf.drawImage(str(SEALS_PATH), 3 * mm, height - 11 * mm, 20 * mm, 10 * mm,
+                  preserveAspectRatio=True, mask="auto")
+    draw_fit(pdf, "OUT-OF-SCHOOL YOUTH", 25 * mm, height - 7 * mm, 57 * mm, 4.5 * mm, 10, True, colors.white)
+    draw_fit(pdf, "IDENTIFICATION CARD", 25 * mm, height - 11 * mm, 57 * mm, 3.5 * mm, 6.5, False, colors.white)
     pdf.setFillColor(colors.HexColor("#e9f3ee"))
     pdf.rect(4 * mm, 15 * mm, 20 * mm, 24 * mm, fill=1, stroke=0)
     if photo_path and Path(photo_path).is_file():

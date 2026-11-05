@@ -47,7 +47,7 @@ On first launch, create your own administrator username and password. The app au
 
 Copy **`OSY Connect.exe`** into a writable folder on another 64-bit Windows PC and double-click it. Python and XAMPP are not required. A fresh installation creates its database and asks you to create an administrator account.
 
-For the source-code version instead, copy `main.py`, `requirements.txt`, and the `desktop` folder, install Python, and run `python main.py`.
+For the source-code version instead, copy `main.py`, `requirements.txt`, and the `desktop` and `assets` folders, install Python, and run `python main.py`.
 
 To keep the existing records and account, close the app and also copy the complete **`desktop-data` folder**, or restore a backup as described below. The SQLite database and photos travel together. A separate installation has separate records; there is no automatic synchronization. Keep the working database on a local disk; do not synchronize an actively open SQLite database through OneDrive or a shared folder. Copy closed backups instead.
 

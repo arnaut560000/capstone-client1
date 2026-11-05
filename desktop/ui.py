@@ -9,6 +9,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from PIL import Image, ImageOps, ImageTk
 
+from .branding import SEALS_PATH
 from .data import Store, CHOICES, FIELDS, LABELS, age, export_csv
 from .printing import id_pdf, report_pdf
 
@@ -16,6 +17,15 @@ GREEN = "#14765b"
 INK = "#24352f"
 MUTED = "#718178"
 BG = "#f4f7f5"
+
+
+def add_seals(parent, height, background):
+    with Image.open(SEALS_PATH) as source:
+        source.thumbnail((height * 2, height), Image.Resampling.LANCZOS)
+        image = ImageTk.PhotoImage(source, master=parent)
+    label = tk.Label(parent, image=image, bg=background, borderwidth=0)
+    label.image = image
+    label.pack(side="left", padx=(0, 12))
 
 
 def open_file(path):
@@ -143,18 +153,20 @@ class Application(tk.Tk):
         self.username = None
         self.auth_screen()
 
-    def page(self, name, description):
+    def page(self, name, description, show_seals=False):
         for child in self.content.winfo_children():
             child.destroy()
         for key, button in self.nav_buttons.items():
             button.config(bg="#e9f3ee" if key == name else "white", fg=GREEN if key == name else INK)
         heading = ttk.Frame(self.content)
         heading.pack(fill="x", pady=(0, 22))
+        if show_seals:
+            add_seals(heading, 58, BG)
         ttk.Label(heading, text=name, style="Title.TLabel").pack(anchor="w")
         ttk.Label(heading, text=description, style="Muted.TLabel").pack(anchor="w", pady=(5, 0))
 
     def dashboard(self):
-        self.page("Dashboard", "Your community at a glance. Archived records are excluded.")
+        self.page("Dashboard", "Your community at a glance. Archived records are excluded.", show_seals=True)
         rows = self.store.records()
         cards = ttk.Frame(self.content)
         cards.pack(fill="x")
@@ -316,7 +328,11 @@ class Application(tk.Tk):
         card = tk.Frame(dialog, bg="white", width=650, height=350, highlightthickness=1, highlightbackground="#dce5df")
         card.pack(padx=25)
         card.pack_propagate(False)
-        tk.Label(card, text="OUT-OF-SCHOOL YOUTH\nIDENTIFICATION CARD", bg=GREEN, fg="white", font=("Segoe UI", 14, "bold"), anchor="w", padx=20, pady=10).pack(fill="x")
+        header = tk.Frame(card, bg=GREEN, padx=18, pady=6)
+        header.pack(fill="x")
+        add_seals(header, 58, GREEN)
+        tk.Label(header, text="OUT-OF-SCHOOL YOUTH\nIDENTIFICATION CARD", bg=GREEN, fg="white",
+                 font=("Segoe UI", 14, "bold"), justify="left").pack(side="left")
         main = tk.Frame(card, bg="white", padx=18, pady=15)
         main.pack(fill="both", expand=True)
         photo = self.store.photo_path(record["photo"])

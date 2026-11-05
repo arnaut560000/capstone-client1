@@ -11,7 +11,7 @@ if (-not (Test-Path -LiteralPath $buildPython)) {
 if ($LASTEXITCODE -ne 0) { throw 'Could not install packaging dependencies.' }
 $buildDir = Join-Path $projectDir 'build'
 $outputDir = Join-Path $projectDir 'dist'
-& $buildPython -m PyInstaller --noconfirm --onefile --windowed --name 'OSY Connect' --collect-all PIL --collect-all reportlab --distpath $outputDir --workpath (Join-Path $buildDir 'pyinstaller') --specpath $buildDir (Join-Path $projectDir 'main.py')
+& $buildPython -m PyInstaller --noconfirm --onefile --windowed --name 'OSY Connect' --add-data "$(Join-Path $projectDir 'assets/talavera-mydo.png');assets" --collect-all PIL --collect-all reportlab --distpath $outputDir --workpath (Join-Path $buildDir 'pyinstaller') --specpath $buildDir (Join-Path $projectDir 'main.py')
 if ($LASTEXITCODE -ne 0) { throw 'Executable packaging failed.' }
 $builtExe = Join-Path $outputDir 'OSY Connect.exe'
 $report = Join-Path $buildDir ('packaged-check-' + [guid]::NewGuid().ToString('N') + '.json')
